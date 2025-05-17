@@ -1,1 +1,9 @@
-*.env
+# .gitignore
+venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+*.log
+*.db
+*.html
