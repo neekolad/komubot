@@ -1,11 +1,19 @@
 import requests
 import pprint
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup as bs
 import telepot
 from dotenv import load_dotenv
 import os
+import sys
+import io
+import json
 
-load_dotenv('token.env')
+DEBUG = True
+
+# Force UTF-8 printing to terminal
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
+load_dotenv('.env')
 
 # Teleport telegram information
 token = os.getenv("KOMUBOT_TOKEN")
@@ -14,45 +22,77 @@ reciever_id = recid = os.getenv("KOMUBOT_RECIEVER_ID")
 # Get updates
 # 'https://api.telegram.org/bot' + token + '/getUpdates'
 
-page = requests.get("https://www.bvk.rs/kvarovi-na-mrezi/")
-print(page)
+res = requests.get("https://www.bvk.rs/kvarovi-na-mrezi/")
+print(f"Status code:", res.status_code)
 
-soup = BeautifulSoup(page.content, "html.parser")
+page = bs(res.content, "html.parser")
+
+with open("page.html", "w", encoding="utf-8") as f:
+    f.write(page.decode())
 
 #Selecting div with page content i need
-main = soup.find_all('div', class_='togglecontainer')
+main = page.select('div[role=tablist]')
+# print(main)
 
 # Defining empty dictionary
-d={}
+all_data = []
 
 # Looping through items in main
-for i in main:
+print("Number of sections in results:", len(main))
+for section in main:
 
+    data = []
     # Defining list items (regions without water)
-    list_item = i.find('ul').get_text().strip().replace('\n', ', ')
+    # list_item = i.find('ul').get_text().strip().replace('\n', ', ')
+    outage_date_selector = section.select_one("p")
+    if outage_date_selector:
+        outage_date = outage_date_selector.text
+    else:
+        otage_date = '01.01.2000'
 
-    # Creating paragraph list where first element is DATE and 
-    # second is TIME of water shortage
-    par = i.find_all('p')
-    date = par[0].get_text()
-    d[date] = {}
+    outage_time_selector = section.select_one("h1")
+    if outage_time_selector:
+        outage_time = outage_time_selector.text
+    else:
+        outage_time = "00:00"
+    
+    print(f"Outage date: {outage_date}, Outage time: {outage_time}")
+
+    for li in section.select("ul > li"):
+        region = li.select_one("strong").text.replace(":", "").strip()
+        address = li.text.replace(region, "").replace(":", "").strip()
+        if DEBUG:
+            print(f"Region: {region}, address: {address}")
+
+        # push to data list
+        data.append({'region' : region, 'address' : [addr for addr in address.split(', ')]})
+    
+    all_data.append(
+        {
+            "date" : outage_date,
+            "time" : outage_time,
+            "regions" : data
+        }
+    )
+
+print(json.dumps(all_data, ensure_ascii=False, indent=4))
 
     # Defining keys in dictionary and pushing data
-    d[date]["time"], d[date]["region"] = par[1].get_text(), list_item
+    # d[date]["time"], d[date]["region"] = par[1].get_text(), list_item
 
-    print(d)
+    # print(d)
 
 
 
 # Check to see if my region appears
-if "Трстеничка" or "Палилула" in d[date]["region"]:
+# if "Трстеничка" or "Палилула" in d[date]["region"]:
 
-    # Start a bot
-    bot = telepot.Bot(token)
+#     # Start a bot
+#     bot = telepot.Bot(token)
 
-    # Create a message
-    msg = 'ОБАВЕШТЕЊЕ: помињу се улице око тебе, иди на https://www.bvk.rs/kvarovi-na-mrezi/ и провери о чему се ради'
+#     # Create a message
+#     msg = 'ОБАВЕШТЕЊЕ: помињу се улице око тебе, иди на https://www.bvk.rs/kvarovi-na-mrezi/ и провери о чему се ради'
 
-    # Send a message
-    bot.sendMessage(reciever_id, msg )
+#     # Send a message
+#     bot.sendMessage(reciever_id, msg )
     
