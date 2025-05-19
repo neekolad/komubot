@@ -34,7 +34,7 @@ def notify_users(db_path, outage_id):
             # Placeholder for actual send
             print(f"[NOTIFY] Would notify {user['name']} via email: {user['email']}")
             message = make_message(json_data, user['keywords'])
-            subject = "Nestanak vode"
+            subject = "Komubot obavestenje"
             email = user['email']
             send_mail(message, subject, email)
             
@@ -70,9 +70,23 @@ def make_message(json, keywords):
 
 def msg_text(json_data, keywords):
     haystack = json.dumps(json_data, ensure_ascii=False).lower()
-    # print(haystack)
+    print(haystack)
+    # print(json.dumps(json_data, ensure_ascii=False, indent=4))
+    print(keywords)
+    outage_regions = []
+    for lst in json_data:
+        for item in lst['regions']:
+            dt = lst['date']
+            tm = lst['time']
+            print(item['region'])
+            for kw in keywords:
+                if item['region'].lower() == kw.lower():
+                    print(item['region'], 'found keyword', kw)
+                    outage_regions.append(f"{item['region']} - {', '.join([i for i in item['address']])}")
+
     # print(type(haystack))
-    msg = "Test mail"
+    msg = f"Hey, there will be a water outage in your region on {dt}:\n{', '.join(outage_regions)}"
+    print(msg)
     return msg
 
 def send_mail(message, subject, recipient=None):
