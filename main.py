@@ -1,11 +1,13 @@
 from scraper_water import water_scraper
 from db.models import insert_outage
+from db.schema import init_db
 from notifications import notify_users
 
 
 DB_PATH = "komubot_database.db"
 
 def main():
+    init_db()
     data = water_scraper(DB_PATH)
     outage_id = insert_outage(DB_PATH, "water", data)
 

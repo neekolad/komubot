@@ -38,5 +38,3 @@ def init_db(db_path="komubot_database.db"):
 
     conn.commit()
     conn.close()
-
-init_db()
