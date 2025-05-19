@@ -10,7 +10,6 @@ import json
 
 from db.models import insert_outage
 
-# DB_PATH = "komubot_database.db"
 DEBUG = True
 
 # Force UTF-8 printing to terminal
@@ -75,7 +74,6 @@ def water_scraper(db_path):
                 "regions" : data
             }
         )
-        # outage_id = insert_outage(db_path, "water", all_data)
         return all_data
 
 
