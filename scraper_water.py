@@ -40,11 +40,8 @@ def water_scraper(db_path):
 
     print("Number of sections in results:", len(main))
     # Looping through sections in main section
-    i=0
-    for section in main:
-        i=i+1
 
-        print(f"loop num {i}")
+    for section in main:
 
         data = []
         # Defining list items (regions without water)
@@ -71,9 +68,6 @@ def water_scraper(db_path):
             # push to data list
             data.append({'region' : region, 'address' : [addr for addr in address.split(', ')]})
 
-        print(f"inserting data: {data}")
-        print("-"*50)
-
         all_data.append(
             {
                 "date" : outage_date,
@@ -81,8 +75,7 @@ def water_scraper(db_path):
                 "regions" : data
             }
         )
-
-        print(json.dumps(all_data, ensure_ascii=False, indent=4))
+        # print(json.dumps(all_data, ensure_ascii=False, indent=4))
     return all_data
 
 
