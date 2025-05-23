@@ -29,6 +29,7 @@ def insert_outage(db_path, source, json_data):
         cursor.execute("SELECT id FROM outages WHERE json_hash = ?", (json_hash,))
         existing = cursor.fetchone()
         if existing:
+            # print(f"[DEBUG] Raw fetch result: {existing}")
             print(f"[SKIPPED] Duplicate data (already in row ID: {existing[0]})")
             return None
 

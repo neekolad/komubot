@@ -2,9 +2,10 @@ from scraper_water import water_scraper
 from db.models import insert_outage
 from db.schema import init_db
 from notifications import notify_users
+import os
 
-
-DB_PATH = "komubot_database.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "komubot_database.db")
 
 def main():
     init_db()
