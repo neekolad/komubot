@@ -38,6 +38,7 @@ def insert_outage(db_path, source, json_data):
             VALUES (?, ?, ?)
         """, (source, json_string, json_hash))
         
+        print(f"Inserting data:\n {json_data}")
         conn.commit()
         return cursor.lastrowid
 

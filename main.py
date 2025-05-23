@@ -11,12 +11,13 @@ def main():
     data = water_scraper(DB_PATH)
     outage_id = insert_outage(DB_PATH, "water", data)
 
+    # for now just collect outages
     # if outage_id:
-    if True:     # TEST
-        # notify_users(DB_PATH, outage_id)
-        notify_users(DB_PATH, 3)    # TEST
-    else:
-        print("[INFO] No new outage info to notify.")
+    # if True:     # TEST
+    #     notify_users(DB_PATH, outage_id)
+    #     notify_users(DB_PATH, 3)    # TEST
+    # else:
+    #     print("[INFO] No new outage info to notify.")
 
 
 
