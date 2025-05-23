@@ -7,6 +7,7 @@ import os
 import sys
 import io
 import json
+from datetime import datetime
 
 from db.models import insert_outage
 
@@ -27,18 +28,21 @@ reciever_id = recid = os.getenv("KOMUBOT_RECIEVER_ID")
 def water_scraper(db_path):
     res = requests.get("https://www.bvk.rs/kvarovi-na-mrezi/")
     print(f"Status code:", res.status_code)
+    now = datetime.datetime.now()
 
     page = bs(res.content, "html.parser")
 
     with open("water_page.html", "w", encoding="utf-8") as f:
         f.write(page.decode())
 
+    print("="*80)
+    print("Spider initiated at:", now.strftime("%Y-%m-%d %H:%M:%S"))
+    print("Number of sections in results:", len(main))
+
     #Selecting div with page content i need
     main = page.select('div[role=tablist]')
-
     all_data = []
 
-    print("Number of sections in results:", len(main))
     # Looping through sections in main section
 
     for section in main:
