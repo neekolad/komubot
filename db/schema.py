@@ -18,21 +18,24 @@ def init_db(db_path="komubot_database.db"):
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         email TEXT,
-        telegram_id TEXT,
         phone TEXT,
         keywords TEXT,  -- comma-separated or JSON list like '["Borča", "Звездара"]'
-        wants_email INTEGER DEFAULT 1,
-        wants_telegram INTEGER DEFAULT 0,
-        wants_sms INTEGER DEFAULT 0
+        inserted_at TEXT DEFAULT CURRENT_TIMESTAMP
     )""")
 
     c.execute("""
-        CREATE TABLE IF NOT EXISTS notifications_sent (
+        CREATE TABLE IF NOT EXISTS emails_queue (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
         outage_id INTEGER,
-        notified_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        method TEXT,  -- 'email', 'telegram', etc.
+        email_addr TEXT,
+        phone TEXT,
+        email_subject TEXT,
+        email_body TEXT,
+        status TEXT,    -- pending/sent/retry/failed/etc
+        inserted_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME,
+        sent_at DATETIME,
         UNIQUE(user_id, outage_id)  -- ensures 1 notification per user per outage
     )""")
 
