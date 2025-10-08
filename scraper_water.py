@@ -10,6 +10,7 @@ import json
 from datetime import datetime
 
 from db.models import insert_outage
+from helpers import cyrillic_to_latin
 
 DEBUG = False
 
@@ -51,11 +52,11 @@ def water_scraper(db_path):
         if outage_date_selector:
             outage_date = outage_date_selector.text
         else:
-            otage_date = '01.01.2000'
+            outage_date = '01.01.2000'
 
-        outage_time_selector = section.select_one("h1")
+        outage_time_selector = section.select_one("blockquote > h1")
         if outage_time_selector:
-            outage_time = outage_time_selector.text
+            outage_time = cyrillic_to_latin(outage_time_selector.text)
         else:
             outage_time = "00:00"
         
@@ -63,12 +64,12 @@ def water_scraper(db_path):
 
         for li in section.select("ul > li"):
             region = li.select_one("strong").text.replace(":", "").strip()
-            address = li.text.replace(region, "").replace(":", "").strip()
+            address = cyrillic_to_latin(li.text.replace(region, "").replace(":", "").strip())
             if DEBUG:
                 print(f"Region: {region}, address: {address}")
 
             # push to data list
-            data.append({'region' : region, 'address' : [addr for addr in address.split(', ')]})
+            data.append({'region' : cyrillic_to_latin(region), 'address' : [cyrillic_to_latin(addr) for addr in address.split(', ')]})
 
         all_data.append(
             {
