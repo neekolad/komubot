@@ -10,7 +10,7 @@ def init_db(db_path="komubot_database.db"):
         source TEXT NOT NULL,
         json TEXT NOT NULL,
         json_hash TEXT NOT NULL UNIQUE,
-        inserted_at TEXT DEFAULT CURRENT_TIMESTAMP
+        inserted_at TEXT DEFAULT CURRENT_TIMESTAMP,
         processed TEXT DEFAULT 0
     )""")
 
