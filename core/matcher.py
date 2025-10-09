@@ -17,7 +17,7 @@ class Matcher:
     
     def get_outages(self):
         with self.connect() as conn:
-            return conn.execute("SELECT id, source, json FROM outages").fetchall()
+            return conn.execute("SELECT id, source, json FROM outages WHERE processed=0").fetchall()
         
     def get_user_keywords(self):
         with self.connect() as conn:
@@ -51,6 +51,8 @@ class Matcher:
                 #         # self.insert_email(user_id, outage_id, email)
                 #         print(user_id, outage_id)
                 #         break  # avoid duplicates for same outage/user
+                
+                # match those keywords and insert email to emails_queue table
         return matched
     
     def insert_email(self, user_id, outage_id, email):
