@@ -35,7 +35,8 @@ def init_db(db_path="komubot_database.db"):
         email_body TEXT,
         status TEXT,    -- pending/sent/retry/failed/etc
         inserted_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME,
+        att_count INT DEFAULT 0,
+        processed_at DATETIME,
         sent_at DATETIME,
         UNIQUE(user_id, outage_id)  -- ensures 1 notification per user per outage
     )""")
